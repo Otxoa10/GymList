@@ -72,6 +72,9 @@ interface RoutineDao {
     @Query("SELECT COALESCE(MAX(position), -1) FROM routines")
     suspend fun maxRoutinePosition(): Int
 
+    @Query("SELECT COALESCE(MIN(position), 0) FROM routines")
+    suspend fun minRoutinePosition(): Int
+
     @Insert
     suspend fun insertItem(item: RoutineItem): Long
 

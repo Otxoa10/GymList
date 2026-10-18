@@ -40,12 +40,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymlist.app.data.model.RoutineSummary
 import com.gymlist.app.ui.common.EmptyState
+import com.gymlist.app.ui.plan.CreatePlanCard
 
-/** Lista de rutinas. Desde aquí se crea una nueva o se abre una para diseñarla. */
+/**
+ * Lista de rutinas. Desde aquí se crea una nueva, se abre una para diseñarla o se genera un plan
+ * completo con el cuestionario.
+ */
 @Composable
 fun RoutinesScreen(
     viewModel: RoutinesViewModel,
     onOpenRoutine: (Long) -> Unit,
+    onCreatePlan: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val routines by viewModel.routines.collectAsStateWithLifecycle()
@@ -70,6 +75,9 @@ fun RoutinesScreen(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 180.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            item(key = "create-plan") {
+                CreatePlanCard(onClick = onCreatePlan, modifier = Modifier.fillMaxWidth())
+            }
             if (routines.isEmpty()) {
                 item {
                     EmptyState(

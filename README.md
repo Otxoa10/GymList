@@ -20,6 +20,13 @@ alguien que acaba de empezar.
   salen los entrenamientos de ese día, y cada uno abre su ficha con todas las series.
 - **Diseño de rutinas.** Crear rutinas, añadir ejercicios del catálogo (con buscador y filtros por
   zona, dificultad y "sin material"), reordenarlos y ajustar series / repeticiones / descanso.
+- **Plan personalizado.** Siete preguntas (objetivo, experiencia, días por semana, tiempo por
+  sesión, dónde entrenas y con qué material, molestias y zona prioritaria) y la app monta un plan
+  semanal completo: reparte los días (cuerpo completo, torso/pierna o empuje/tirón/pierna), elige
+  ejercicios que se pueden hacer con ese material sin cargar las zonas con molestias, y les pone
+  series, repeticiones y descanso según el objetivo y el nivel. Antes de guardarlo se puede
+  cambiar cualquier ejercicio por otro que trabaje lo mismo. Cada día se guarda como una rutina
+  normal. No usa red ni IA: son reglas y una tabla de ejercicios por patrón de movimiento.
 - El peso de cada serie se **prerellena con el último que usaste** en ese ejercicio.
 - Si cierras la app a media sesión, al volver la retomas donde la dejaste.
 - Todo funciona **sin conexión**: las imágenes van dentro de la app.
@@ -34,6 +41,7 @@ máquina. Requisitos que ya cumple el entorno: JDK 21 (el que trae Android Studi
 ```bash
 ./gradlew :app:assembleDebug      # APK de depuración
 ./gradlew :app:installDebug       # instalar en el dispositivo/emulador conectado
+./gradlew :app:testDebugUnitTest  # tests del generador de planes (en la JVM, sin emulador)
 ```
 
 El APK de release pesa unos 20 MB, de los que 18 MB son las imágenes de los ejercicios.
@@ -94,6 +102,8 @@ app/src/main/
     ├── data/
     │   ├── model/Entities.kt  Exercise, Routine, RoutineItem, WorkoutSession, SetLog
     │   ├── local/             Room: base de datos, DAOs y conversores
+    │   ├── plan/              Plan personalizado: respuestas, tabla de ejercicios por
+    │   │                      patrón de movimiento (PlanCatalog) y generador
     │   └── repo/              GymRepository, ExerciseCatalog (lee los assets),
     │                          Taxonomy (traducciones) y las rutinas de ejemplo
     ├── ui/
@@ -101,6 +111,7 @@ app/src/main/
     │   ├── home/              "Hoy": retomar o empezar entrenamiento, resumen
     │   ├── workout/           Entrenamiento en curso + temporizador de descanso
     │   ├── routines/          Lista de rutinas y editor de rutina
+    │   ├── plan/              Cuestionario del plan, revisión y guardado
     │   ├── calendar/          Calendario de seguimiento y ficha de un entrenamiento
     │   ├── library/           Catálogo, filtros y selector de ejercicios
     │   ├── about/             Créditos y atribución
@@ -124,6 +135,15 @@ app/src/main/
   siga contando al cambiar de pestaña.
 - **Solo puede haber un entrenamiento en curso.** Si intentas empezar otro, la app te lleva al
   que ya tienes abierto en vez de crear uno huérfano.
+- **El plan personalizado sale de una tabla hecha a mano** (`data/plan/PlanCatalog.kt`), no del
+  campo `equipment` del catálogo: para cada hueco de una rutina (sentadilla, remo, press...) hay
+  una lista de ejercicios en orden de preferencia, con el material que necesitan de verdad (el
+  press con mancuernas también necesita banco), el nivel mínimo y las zonas que suelen cargar.
+  Los tests comprueban que todos los id existen en el catálogo y que cualquier combinación de
+  respuestas da un plan que respeta material, nivel y molestias.
+- **El plan se guarda como rutinas normales**, sin tablas nuevas en la base de datos: cada día es
+  una rutina que se edita como cualquier otra. Por eso generar un plan no toca el esquema ni
+  obliga a migrar.
 
 ## Limitaciones conocidas
 

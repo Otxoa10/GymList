@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import com.gymlist.app.ui.common.EmptyState
 import com.gymlist.app.ui.common.SectionTitle
 import com.gymlist.app.ui.common.StatPill
 import com.gymlist.app.ui.common.rememberElapsedText
+import com.gymlist.app.ui.plan.CreatePlanCard
 import com.gymlist.app.util.epochDayToLocalDate
 import com.gymlist.app.util.formatMinutes
 import com.gymlist.app.util.formatVolume
@@ -54,6 +56,7 @@ fun HomeScreen(
     onStartRoutine: (Long) -> Unit,
     onOpenRoutines: () -> Unit,
     onOpenSession: (Long) -> Unit,
+    onCreatePlan: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -95,6 +98,14 @@ fun HomeScreen(
         }
 
         if (active == null) {
+            // Quien todavía no ha entrenado nunca es quien más necesita que le digan qué hacer.
+            // Más adelante el acceso sigue en la pestaña de rutinas.
+            if (state.recent.isEmpty() && state.routines.isNotEmpty() && !state.loading) {
+                item {
+                    CreatePlanCard(onClick = onCreatePlan, modifier = Modifier.fillMaxWidth())
+                }
+            }
+
             item {
                 Spacer(Modifier.height(4.dp))
                 SectionTitle("Empezar entrenamiento")
@@ -105,9 +116,12 @@ fun HomeScreen(
                     EmptyState(
                         icon = Icons.Default.FitnessCenter,
                         title = "Todavía no tienes rutinas",
-                        message = "Crea tu primera rutina eligiendo ejercicios del catálogo y diciendo cuántas series, repeticiones y descanso quieres en cada uno.",
+                        message = "Responde unas preguntas y se te prepara un plan completo, o crea tu propia rutina eligiendo ejercicios del catálogo.",
                         action = {
-                            Button(onClick = onOpenRoutines) { Text("Crear rutina") }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Button(onClick = onCreatePlan) { Text("Crear mi plan") }
+                                TextButton(onClick = onOpenRoutines) { Text("Crear una rutina a mano") }
+                            }
                         }
                     )
                 }

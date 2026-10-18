@@ -11,6 +11,7 @@ import com.gymlist.app.data.model.RoutineSummary
 import com.gymlist.app.data.model.SessionSummary
 import com.gymlist.app.data.model.SetLog
 import com.gymlist.app.data.model.WorkoutSession
+import com.gymlist.app.data.plan.GeneratedPlan
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -110,6 +111,33 @@ class GymRepository(
                 d.item.copy(position = index)
             }
             if (renumbered.isNotEmpty()) routineDao.updateItems(renumbered)
+        }
+    }
+
+    /**
+     * Guarda cada día de un plan generado como una rutina normal, editable como cualquier otra.
+     * Van al principio de la lista y en orden, porque es lo que el usuario acaba de pedir.
+     * Devuelve los id de las rutinas, del día 1 al último.
+     */
+    suspend fun savePlan(plan: GeneratedPlan): List<Long> {
+        val firstPosition = routineDao.minRoutinePosition() - plan.days.size
+        return plan.days.mapIndexed { index, day ->
+            val routineId = routineDao.insertRoutine(
+                Routine(name = day.name, notes = day.notes, position = firstPosition + index)
+            )
+            day.exercises.forEachIndexed { position, exercise ->
+                routineDao.insertItem(
+                    RoutineItem(
+                        routineId = routineId,
+                        exerciseId = exercise.exerciseId,
+                        position = position,
+                        sets = exercise.sets,
+                        reps = exercise.reps,
+                        restSeconds = exercise.restSeconds
+                    )
+                )
+            }
+            routineId
         }
     }
 

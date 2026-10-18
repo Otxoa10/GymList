@@ -3,6 +3,7 @@ package com.gymlist.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -44,6 +45,8 @@ import com.gymlist.app.ui.home.HomeScreen
 import com.gymlist.app.ui.home.HomeViewModel
 import com.gymlist.app.ui.library.LibraryScreen
 import com.gymlist.app.ui.library.LibraryViewModel
+import com.gymlist.app.ui.plan.PlanWizardScreen
+import com.gymlist.app.ui.plan.PlanWizardViewModel
 import com.gymlist.app.ui.routines.RoutineDetailScreen
 import com.gymlist.app.ui.routines.RoutineDetailViewModel
 import com.gymlist.app.ui.routines.RoutinesScreen
@@ -59,6 +62,7 @@ object Routes {
     const val LIBRARY = "library"
     const val WORKOUT = "workout"
     const val ABOUT = "about"
+    const val PLAN = "plan"
     const val ROUTINE_DETAIL = "routines/{routineId}"
     const val SESSION_DETAIL = "session/{sessionId}"
 
@@ -108,7 +112,9 @@ fun GymListApp(repository: GymRepository) {
             )
         },
         bottomBar = {
-            Column {
+            // La barra de pestañas ya deja sitio para la barra de gestos del sistema. Sin ella
+            // hay que dejarlo aquí, o los botones de abajo de cada pantalla quedarían debajo.
+            Column(if (showTabs) Modifier else Modifier.navigationBarsPadding()) {
                 RestTimerBar(
                     state = timer,
                     onTogglePause = workoutViewModel::togglePause,
@@ -148,7 +154,8 @@ fun GymListApp(repository: GymRepository) {
                         }
                     },
                     onOpenRoutines = { navController.switchTab(Routes.ROUTINES) },
-                    onOpenSession = { navController.navigate(Routes.sessionDetail(it)) }
+                    onOpenSession = { navController.navigate(Routes.sessionDetail(it)) },
+                    onCreatePlan = { navController.navigate(Routes.PLAN) }
                 )
             }
 
@@ -164,7 +171,25 @@ fun GymListApp(repository: GymRepository) {
             composable(Routes.ROUTINES) {
                 RoutinesScreen(
                     viewModel = viewModel(factory = RoutinesViewModel.factory(repository)),
-                    onOpenRoutine = { navController.navigate(Routes.routineDetail(it)) }
+                    onOpenRoutine = { navController.navigate(Routes.routineDetail(it)) },
+                    onCreatePlan = { navController.navigate(Routes.PLAN) }
+                )
+            }
+
+            composable(Routes.PLAN) {
+                PlanWizardScreen(
+                    viewModel = viewModel(factory = PlanWizardViewModel.factory(repository)),
+                    onClose = { navController.popBackStack() },
+                    onOpenRoutines = {
+                        navController.popBackStack()
+                        navController.switchTab(Routes.ROUTINES)
+                    },
+                    onStartRoutine = { routineId ->
+                        workoutViewModel.startRoutine(routineId) {
+                            navController.popBackStack()
+                            navController.navigate(Routes.WORKOUT)
+                        }
+                    }
                 )
             }
 

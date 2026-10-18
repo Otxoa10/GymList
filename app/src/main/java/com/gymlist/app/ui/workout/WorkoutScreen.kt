@@ -62,6 +62,7 @@ import com.gymlist.app.ui.common.CompactNumberField
 import com.gymlist.app.ui.common.ExerciseInfoButton
 import com.gymlist.app.ui.common.rememberElapsedText
 import com.gymlist.app.util.formatRest
+import com.gymlist.app.util.formatRestLabel
 import com.gymlist.app.util.formatWeight
 import com.gymlist.app.util.playRestFinishedAlert
 
@@ -302,7 +303,7 @@ private fun ExerciseBlockCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        "${block.sets.size} × ${block.targetReps} · descanso ${formatRest(block.restSeconds)}",
+                        "${block.sets.size} × ${block.targetReps} · ${formatRestLabel(block.restSeconds)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

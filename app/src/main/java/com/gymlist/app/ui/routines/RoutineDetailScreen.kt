@@ -60,6 +60,7 @@ import com.gymlist.app.ui.common.ExerciseInfoButton
 import com.gymlist.app.ui.library.ExercisePickerSheet
 import com.gymlist.app.ui.common.SectionTitle
 import com.gymlist.app.util.formatRest
+import com.gymlist.app.util.formatRestLabel
 
 /**
  * El diseñador de rutinas: añadir ejercicios, ordenarlos y ajustar series, repeticiones y
@@ -331,7 +332,7 @@ private fun RoutineItemRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    "${entry.item.sets} × ${entry.item.reps} · descanso ${formatRest(entry.item.restSeconds)}",
+                    "${entry.item.sets} × ${entry.item.reps} · ${formatRestLabel(entry.item.restSeconds)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

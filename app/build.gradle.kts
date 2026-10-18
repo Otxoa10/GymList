@@ -80,4 +80,7 @@ dependencies {
 
     // Imágenes de ejemplo de los ejercicios (ficheros locales o URL).
     implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // El generador de planes es lógica pura: se prueba en la JVM, sin emulador.
+    testImplementation("junit:junit:4.13.2")
 }

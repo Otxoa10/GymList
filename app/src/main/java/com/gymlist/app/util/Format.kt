@@ -37,6 +37,10 @@ fun formatRest(seconds: Int): String = when {
     else -> "$seconds s"
 }
 
+/** Para las líneas de resumen: "descanso 90 s", o "sin descanso" (el cardio del final). */
+fun formatRestLabel(seconds: Int): String =
+    if (seconds <= 0) "sin descanso" else "descanso ${formatRest(seconds)}"
+
 /** Quita el ".0" de los pesos enteros: 20.0 -> "20", 22.5 -> "22,5". */
 fun formatWeight(weight: Double?): String {
     if (weight == null) return ""
