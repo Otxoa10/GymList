@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Las imágenes de los ejercicios se resuelven por nombre (Resources.getIdentifier), así que R8
+  no las ve referenciadas y en release las eliminaría. Esto las conserva.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ex_*" />

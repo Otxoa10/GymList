@@ -1,0 +1,19 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+keystore.properties
+*.jks
+.kotlin/
+
+# Catálogo de RepDB: su licencia no permite republicarlo como dataset, así que no va en el repo
+# público. Se usa dentro de la app, pero cada uno tiene que ponerlo en su copia local.
+app/src/main/assets/exercises_es.json
+app/src/main/assets/exercise_images/

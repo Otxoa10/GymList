@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema mínimo: toda la apariencia real la pinta Compose (GymListTheme).
+         Esto solo evita el parpadeo blanco mientras arranca la Activity. -->
+    <style name="Theme.GymList" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/gym_window_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
